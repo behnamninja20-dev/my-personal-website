@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090d16">
+    <meta name="description" content="وب‌سایت شخصی بهنام؛ طراحی و توسعه تجربه‌های دیجیتال با وردپرس، کدنویسی، هوش مصنوعی و تولید محتوای بصری.">
+    <meta name="color-scheme" content="dark light">
+    <title>Behnam | Portfolio</title>
+
+    <!-- کلاس js-enabled باعث می‌شود انیمیشن‌های وابسته به جاوااسکریپت فقط در حالت فعال بودن آن اجرا شوند. -->
+    <script>
+        document.documentElement.classList.replace("no-js", "js-enabled");
+        try {
+            const savedTheme = localStorage.getItem("behnam-theme");
+            document.documentElement.dataset.theme = savedTheme === "light" || savedTheme === "dark" ? savedTheme : "dark";
+        } catch (error) {
+            document.documentElement.dataset.theme = "dark";
+        }
+    </script>
+
+    <!-- اتصال اولیه به میزبان فونت؛ font-display: swap در فایل CSS مانع نامرئی ماندن متن می‌شود. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./style.css">
+    <script src="./app.js" defer></script>
+</head>
+<body>
+    <!-- =====================================================
+         لودینگ آغازین: عبارت ثابت LOADING و سه واژه متحرک
+         اگر جاوااسکریپت اجرا نشود، انیمیشن پشتیبان CSS آن را می‌بندد.
+    ====================================================== -->
+    <div class="site-loader" id="site-loader" aria-hidden="true">
+        <div class="loader-content">
+            <div class="loader-brand">B<span>Z</span><i>.</i></div>
+            <div class="loader-copy" dir="ltr">
+                <span class="loader-fixed">LOADING</span>
+                <span class="loader-word" id="loader-word">IDEAS</span>
+            </div>
+            <div class="loader-track"><span></span></div>
+            <p class="loader-caption">در حال آماده‌سازی فضای خلاقانه</p>
+            <div class="welcome-word" id="welcome-word">WELCOME</div>
+        </div>
+        <div class="loader-corner loader-corner-one"></div>
+        <div class="loader-corner loader-corner-two"></div>
+    </div>
+
+    <!-- پس‌زمینه متحرک بسیار سبک؛ فقط با CSS و بدون حلقه محاسباتی JavaScript -->
+    <div class="ambient-background" aria-hidden="true">
+        <span class="ambient-glow glow-one"></span>
+        <span class="ambient-glow glow-two"></span>
+        <span class="ambient-grid"></span>
+    </div>
+
+    <!-- =====================================================
+         هدر اصلی: در موبایل فقط لوگو، منو و کنترل تم نمایش داده می‌شود.
+    ====================================================== -->
+    <header class="site-header" id="top">
+        <div class="header-inner">
+            <a class="brand" href="#home" aria-label="رفتن به ابتدای صفحه">
+
+                <span class="brand-name">Behnam</span>
+            </a>
+
+            <nav class="main-nav" id="main-nav" aria-label="منوی اصلی">
+                <a class="nav-link is-active" href="#home">خانه</a>
+                <a class="nav-link" href="#skills">مهارت‌ها</a>
+                <a class="nav-link" href="#tools">ابزارها</a>
+                <a class="nav-link" href="#projects">پروژه‌ها</a>
+                <a class="nav-link" href="#request">سفارش پروژه</a>
+                <a class="nav-link" href="#contact">ارتباط</a>
+            </nav>
+
+            <div class="header-actions">
+                <button class="icon-button theme-toggle" type="button" aria-label="تغییر پوسته سایت" title="تغییر پوسته">
+                    <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path></svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 15.2A8.8 8.8 0 0 1 8.8 3.2 9.2 9.2 0 1 0 20.8 15.2Z"></path></svg>
+                </button>
+                <button class="icon-button login-shortcut" type="button" data-open-login>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0"></path></svg>
+                    <span>ورود</span>
+                </button>
+                <button class="icon-button menu-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="main-nav">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- =====================================================
+             HERO: معرفی مسیر کاری، بدون بزرگ‌نمایی نام شخص
+        ====================================================== -->
+        <section class="hero section-shell" id="home" aria-labelledby="hero-title">
+            <div class="hero-copy">
+                <div class="eyebrow hero-eyebrow"><span class="eyebrow-line"></span> طراحی، ساخت و بهتر کردن ایده‌ها</div>
+                <h1 id="hero-title">ایده‌ها را به<br><span class="gradient-text">تجربه‌های واقعی</span> تبدیل می‌کنم.</h1>
+                <p class="hero-description">
+                    از ساخت وب‌سایت با وردپرس تا توسعه اختصاصی با کدنویسی؛ در کنار ابزارهای هوش مصنوعی، اتوماسیون و تولید محتوای بصری، برای هر ایده مسیر مناسبی پیدا می‌کنم.
+                </p>
+                <div class="hero-actions">
+                    <a class="button button-primary" href="#request">شروع یک پروژه <span aria-hidden="true">↙</span></a>
+                    <a class="button button-quiet" href="#projects">دیدن پروژه‌ها <span aria-hidden="true">↗</span></a>
+                </div>
+                <div class="hero-note"><span class="online-indicator"></span> آماده همکاری روی ایده‌های تازه</div>
+            </div>
+
+            <!-- تصویرسازی اختصاصی با CSS؛ به عکس سنگین یا کتابخانه گرافیکی نیاز ندارد. -->
+            <div class="hero-art" aria-label="نمایی گرافیکی از حوزه‌های کاری وب، هوش مصنوعی، طراحی و اتوماسیون">
+                <div class="art-orbit orbit-a"></div>
+                <div class="art-orbit orbit-b"></div>
+                <div class="art-center">
+                    <span class="center-kicker">CREATIVE WORKSPACE</span>
+                    <div class="center-symbol"><span></span><span></span><span></span><span></span></div>
+                    <strong>MAKE IT<br><em>HAPPEN.</em></strong>
+                    <small>IDEA → EXPERIENCE</small>
+                </div>
+                <div class="art-chip chip-web"><span class="chip-icon">W</span><span><b>WEB</b><small>طراحی و توسعه</small></span></div>
+                <div class="art-chip chip-ai"><span class="chip-icon">✳</span><span><b>AI</b><small>هوش مصنوعی</small></span></div>
+                <div class="art-chip chip-visual"><span class="chip-icon">◈</span><span><b>VISUAL</b><small>محتوا و تدوین</small></span></div>
+                <div class="art-chip chip-flow"><span class="chip-icon">⌘</span><span><b>FLOW</b><small>اتوماسیون</small></span></div>
+                <span class="art-index index-one">01 / CREATE</span>
+                <span class="art-index index-two">02 / BUILD</span>
+            </div>
+
+            <!-- آمار ساختگی استفاده نشده؛ این سه مورد خلاصه رویکرد کاری هستند. -->
+            <div class="hero-footline">
+                <div><strong>از ایده</strong><span>شناخت نیاز و مسیر درست</span></div>
+                <div><strong>تا اجرا</strong><span>وردپرس یا توسعه اختصاصی</span></div>
+                <div><strong>با جزئیات</strong><span>طراحی، تجربه و بهینه‌سازی</span></div>
+            </div>
+        </section>
+
+        <!-- نوار دسترسی سریع: نقش فهرست فصل‌ها را دارد و جای بخش مهارت‌ها را نمی‌گیرد. -->
+        <nav class="journey-nav" aria-label="دسترسی سریع به بخش‌های صفحه">
+            <div class="journey-inner">
+                <span class="journey-label">در این صفحه</span>
+                <a href="#skills"><i>01</i> توانمندی‌ها</a>
+                <a href="#tools"><i>02</i> جعبه‌ابزار</a>
+                <a href="#projects"><i>03</i> پروژه‌ها</a>
+                <a href="#request"><i>04</i> ثبت سفارش</a>
+                <a href="#contact"><i>05</i> ارتباط</a>
+                <span class="journey-arrow" aria-hidden="true">↙</span>
+            </div>
+        </nav>
+
+        <!-- =====================================================
+             SKILLS: دومین بخش محتوایی صفحه؛ مهارت‌ها به شکل حوزه‌های کاری
+        ====================================================== -->
+        <section class="content-section section-shell" id="skills" aria-labelledby="skills-title">
+            <div class="section-heading reveal">
+                <div>
+                    <span class="section-kicker">01 — WHAT I DO</span>
+                    <h2 id="skills-title">چیزهایی که <span class="gradient-text">می‌سازم</span></h2>
+                </div>
+                <p>چند مسیر متفاوت که می‌توانند کنار هم قرار بگیرند و یک راه‌حل کامل‌تر بسازند.</p>
+            </div>
+
+            <div class="skills-grid">
+                <article class="skill-card reveal">
+                    <div class="skill-card-head"><span class="skill-number">01</span><span class="skill-icon icon-web">⌘</span></div>
+                    <h3>تجربه‌سازی وب</h3>
+                    <p>از طراحی ساختار و رابط کاربری تا پیاده‌سازی صفحات سریع، واکنش‌گرا و قابل استفاده.</p>
+                    <div class="skill-tags"><span>WordPress</span><span>HTML / CSS</span><span>JavaScript</span></div>
+                </article>
+                <article class="skill-card reveal">
+                    <div class="skill-card-head"><span class="skill-number">02</span><span class="skill-icon icon-ui">◫</span></div>
+                    <h3>طراحی رابط و تجربه کاربری</h3>
+                    <p>توجه به چیدمان، خوانایی، مسیر حرکت کاربر و جزئیاتی که استفاده از محصول را دل‌نشین می‌کنند.</p>
+                    <div class="skill-tags"><span>UI</span><span>UX</span><span>Responsive</span></div>
+                </article>
+                <article class="skill-card reveal">
+                    <div class="skill-card-head"><span class="skill-number">03</span><span class="skill-icon icon-ai">✳</span></div>
+                    <h3>هوش مصنوعی و اتوماسیون</h3>
+                    <p>استفاده هدفمند از مدل‌های هوشمند و اتصال ابزارها برای ساده‌تر شدن کارهای تکراری.</p>
+                    <div class="skill-tags"><span>AI Tools</span><span>n8n</span><span>Workflows</span></div>
+                </article>
+                <article class="skill-card reveal">
+                    <div class="skill-card-head"><span class="skill-number">04</span><span class="skill-icon icon-media">◈</span></div>
+                    <h3>خلق محتوای بصری</h3>
+                    <p>ساخت و آماده‌سازی محتوای گرافیکی، ویدئویی و موشن برای ارائه بهتر ایده‌ها.</p>
+                    <div class="skill-tags"><span>Graphic</span><span>Video</span><span>Motion</span></div>
+                </article>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             TOOLS: ابزارها دسته‌بندی شده‌اند تا فهرست شلوغ و بی‌هدف نشود.
+        ====================================================== -->
+        <section class="content-section tools-section section-shell" id="tools" aria-labelledby="tools-title">
+            <div class="section-heading reveal">
+                <div>
+                    <span class="section-kicker">02 — MY TOOLBOX</span>
+                    <h2 id="tools-title">جعبه‌ابزار <span class="gradient-text">من</span></h2>
+                </div>
+                <p>ابزارها با توجه به مسئله انتخاب می‌شوند؛ نه اینکه همه‌چیز با یک ابزار انجام شود.</p>
+            </div>
+
+            <div class="tool-groups">
+                <article class="tool-group reveal">
+                    <div class="tool-group-title"><span class="tool-group-icon ai-group">✳</span><div><h3>هوش مصنوعی و اتوماسیون</h3><p>ایده‌پردازی، دستیار هوشمند و اتصال فرایندها</p></div></div>
+                    <div class="tool-list">
+                        <span class="tool-pill tool-n8n"><b>n8n</b><small>Automation</small></span>
+                        <span class="tool-pill tool-chatgpt"><b>ChatGPT</b><small>AI Assistant</small></span>
+                        <span class="tool-pill tool-gemini"><b>Gemini</b><small>AI Assistant</small></span>
+                        <span class="tool-pill tool-deepseek"><b>DeepSeek</b><small>AI Model</small></span>
+                        <span class="tool-pill tool-claude"><b>Claude</b><small>AI Assistant</small></span>
+                    </div>
+                </article>
+
+                <article class="tool-group reveal">
+                    <div class="tool-group-title"><span class="tool-group-icon design-group">◈</span><div><h3>طراحی، تصویر و تدوین</h3><p>آماده‌سازی محتوای گرافیکی و ویدئویی</p></div></div>
+                    <div class="tool-list">
+                        <span class="tool-pill tool-photoshop"><b>Ps</b><small>Photoshop</small></span>
+                        <span class="tool-pill tool-premiere"><b>Pr</b><small>Premiere Pro</small></span>
+                        <span class="tool-pill tool-after"><b>Ae</b><small>After Effects</small></span>
+                        <span class="tool-pill tool-davinci"><b>DaV</b><small>DaVinci Resolve</small></span>
+                    </div>
+                </article>
+
+                <article class="tool-group reveal">
+                    <div class="tool-group-title"><span class="tool-group-icon dev-group">⌘</span><div><h3>وب و توسعه</h3><p>از ساخت سایت تا نگهداری و مدیریت کد</p></div></div>
+                    <div class="tool-list">
+                        <span class="tool-pill tool-wordpress"><b>W</b><small>WordPress</small></span>
+                        <span class="tool-pill tool-html"><b>5</b><small>HTML</small></span>
+                        <span class="tool-pill tool-css"><b>#</b><small>CSS</small></span>
+                        <span class="tool-pill tool-js"><b>JS</b><small>JavaScript</small></span>
+                        <span class="tool-pill tool-python"><b>Py</b><small>Python</small></span>
+                        <span class="tool-pill tool-github"><b>GH</b><small>GitHub</small></span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             PROJECTS: کارت اول به سایت شخصی لینک دارد و در تب جدید باز می‌شود.
+             کارت‌های بعدی را می‌توان با همین الگو تکثیر کرد.
+        ====================================================== -->
+        <section class="content-section section-shell" id="projects" aria-labelledby="projects-title">
+            <div class="section-heading reveal">
+                <div>
+                    <span class="section-kicker">03 — SELECTED WORK</span>
+                    <h2 id="projects-title">پروژه‌هایی از <span class="gradient-text">مسیر من</span></h2>
+                </div>
+                <p>نمونه‌کارها به‌مرور اضافه می‌شوند؛ هر کارت می‌تواند به وب‌سایت یا صفحه توضیحات پروژه وصل شود.</p>
+            </div>
+
+            <div class="projects-grid">
+                <article class="project-card project-featured reveal">
+                    <a class="project-visual personal-project" href="./index.html" target="_blank" rel="noopener noreferrer" aria-label="باز کردن وب‌سایت شخصی در تب جدید">
+                        <div class="project-browser">
+                            <div class="browser-top"><span></span><span></span><span></span><small>behnam / portfolio</small></div>
+                            <div class="browser-body"><span class="browser-line line-wide"></span><span class="browser-line"></span><span class="browser-line line-short"></span><div class="browser-blocks"><i></i><i></i><i></i></div></div>
+                        </div>
+                        <span class="project-open">↗</span>
+                        <span class="project-visual-caption">PERSONAL WEBSITE</span>
+                    </a>
+                    <div class="project-info"><div><span class="project-type">وب‌سایت و تجربه دیجیتال</span><h3>وب‌سایت شخصی</h3></div><a class="text-link" href="./index.html" target="_blank" rel="noopener noreferrer">مشاهده دوباره <span>↗</span></a></div>
+                    <p class="project-description">فضایی برای معرفی توانمندی‌ها، ابزارها و پروژه‌ها؛ با طراحی واکنش‌گرا و تعاملات نرم.</p>
+                    <div class="project-tags"><span>UI Design</span><span>Frontend</span><span>Responsive</span></div>
+                </article>
+
+                <!-- الگوی آماده برای پروژه بعدی؛ تا زمان داشتن نمونه‌کار واقعی، ادعای پروژه ساختگی نمایش داده نمی‌شود. -->
+                <article class="project-card project-next reveal">
+                    <div class="next-project-art"><span class="next-plus">＋</span><span class="next-orbit"></span><small>NEXT CASE STUDY</small></div>
+                    <div class="project-info"><div><span class="project-type">جایگاه پروژه بعدی</span><h3>ایده بعدی، اینجا</h3></div><span class="project-counter">02 / 02</span></div>
+                    <p class="project-description">با آماده شدن نمونه‌کار بعدی، تصویر، توضیحات و لینک آن را در همین قالب اضافه کن.</p>
+                    <div class="project-tags"><span>Case Study</span><span>Coming Soon</span></div>
+                </article>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             REQUEST: فرم سفارش؛ ارسال از طریق برنامه ایمیل یا اشتراک‌گذاری تلگرام
+        ====================================================== -->
+        <section class="content-section request-section section-shell" id="request" aria-labelledby="request-title">
+            <div class="request-layout">
+                <div class="request-intro reveal">
+                    <span class="section-kicker">04 — START A PROJECT</span>
+                    <h2 id="request-title">بیایید ایده‌ات را<br><span class="gradient-text">قابل اجرا کنیم.</span></h2>
+                    <p>چند خط درباره چیزی که در ذهن داری بنویس. اطلاعات فرم در پیام ایمیل یا تلگرام قرار می‌گیرد تا راحت‌تر گفتگو را شروع کنیم.</p>
+                    <div class="request-assurance"><span>✦</span><div><b>از توضیح اولیه تا مسیر اجرا</b><small>جزئیات پروژه را بررسی می‌کنیم و قدم بعدی را مشخص می‌کنیم.</small></div></div>
+                    <div class="request-decoration" aria-hidden="true">LET'S<br><em>BUILD.</em></div>
+                </div>
+
+                <form class="project-form reveal" id="project-form">
+                    <div class="form-heading"><div><span>PROJECT BRIEF</span><h3>فرم شروع همکاری</h3></div><span class="form-step">01 / 01</span></div>
+                    <div class="form-grid">
+                        <label class="field"><span>نام شما</span><input type="text" name="name" autocomplete="name" placeholder="نام و نام خانوادگی" required></label>
+                        <label class="field"><span>ایمیل یا راه ارتباطی</span><input type="text" name="reply" placeholder="ایمیل یا آیدی تلگرام" required></label>
+                        <label class="field"><span>نوع پروژه</span><select name="projectType" required><option value="" disabled selected>انتخاب نوع پروژه</option><option>طراحی و راه‌اندازی وب‌سایت</option><option>توسعه اختصاصی و کدنویسی</option><option>وردپرس و بهینه‌سازی سایت</option><option>هوش مصنوعی و اتوماسیون</option><option>طراحی گرافیک و تدوین</option><option>مشاوره یا مورد دیگر</option></select></label>
+                        <label class="field"><span>بودجه تقریبی</span><select name="budget"><option value="فعلاً مشخص نیست">فعلاً مشخص نیست</option><option>کمتر از ۱۰ میلیون تومان</option><option>۱۰ تا ۳۰ میلیون تومان</option><option>۳۰ تا ۶۰ میلیون تومان</option><option>بیشتر از ۶۰ میلیون تومان</option></select></label>
+                        <label class="field field-full"><span>توضیحات پروژه</span><textarea name="details" rows="5" placeholder="چه چیزی می‌خواهی بسازیم؟ امکانات مهم یا نمونه دلخواهت را بنویس..." required></textarea></label>
+                    </div>
+                    <div class="form-actions">
+                        <button class="button button-primary" type="submit">ارسال از طریق ایمیل <span>↗</span></button>
+                        <button class="button button-telegram" type="button" id="send-telegram">ارسال در تلگرام <span>↗</span></button>
+                    </div>
+                    <p class="form-note" id="form-note" role="status">با انتخاب هر روش، متن فرم آماده می‌شود؛ ارسال نهایی در برنامه انتخابی شما انجام می‌گیرد.</p>
+                </form>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             CONTACT: ایمیل و شناسه تلگرام در ابتدای app.js قابل تنظیم‌اند.
+        ====================================================== -->
+        <section class="content-section contact-section section-shell" id="contact" aria-labelledby="contact-title">
+            <div class="section-heading reveal">
+                <div><span class="section-kicker">05 — SAY HELLO</span><h2 id="contact-title">راه‌های <span class="gradient-text">ارتباط</span></h2></div>
+                <p>برای پرسش، پیشنهاد همکاری یا شروع یک گفت‌وگوی تازه، از یکی از راه‌های زیر استفاده کن.</p>
+            </div>
+            <div class="contact-grid">
+                <a class="contact-card reveal" href="#contact" data-contact-email>
+                    <span class="contact-icon email-icon">✉</span><span class="contact-meta">EMAIL</span><strong>ارسال ایمیل</strong><small>برای گفتگو درباره جزئیات پروژه</small><span class="contact-arrow">↗</span>
+                </a>
+                <a class="contact-card reveal" href="#contact" data-contact-telegram>
+                    <span class="contact-icon telegram-icon">➤</span><span class="contact-meta">TELEGRAM</span><strong>گفتگو در تلگرام</strong><small>برای ارتباط سریع‌تر</small><span class="contact-arrow">↗</span>
+                </a>
+                <a class="contact-card reveal" href="tel:+989130930344">
+                    <span class="contact-icon phone-icon">⌕</span><span class="contact-meta">PHONE</span><strong dir="ltr">+98 913 093 0344</strong><small>تماس تلفنی</small><span class="contact-arrow">↗</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- =====================================================
+         فوتر: دسترسی سریع، خلاصه معرفی و راه تماس
+    ====================================================== -->
+    <footer class="site-footer">
+        <div class="footer-main section-shell">
+            <div class="footer-about"><a class="brand footer-brand" href="#home"><span class="brand-name">Behnam</span></a><p>ساختن تجربه‌های دیجیتال با ترکیبی از طراحی، کدنویسی و ابزارهای هوشمند.</p><a class="footer-up" href="#home">بازگشت به بالا <span>↑</span></a></div>
+            <div class="footer-column"><h3>دسترسی سریع</h3><a href="#skills">توانمندی‌ها</a><a href="#tools">جعبه‌ابزار</a><a href="#projects">پروژه‌ها</a></div>
+            <div class="footer-column"><h3>شروع همکاری</h3><a href="#request">ثبت سفارش پروژه</a><a href="#contact">راه‌های ارتباط</a><button type="button" class="footer-login" data-open-login>ورود به پنل</button></div>
+            <div class="footer-callout"><span>HAVE AN IDEA?</span><strong>بیایید از همین‌جا<br>شروع کنیم.</strong><a href="#request">ثبت درخواست <span>↙</span></a></div>
+        </div>
+        <div class="footer-bottom section-shell"><span>© <span id="current-year">2026</span> — ساخته شده توسط بهنام  </span><span>Designed &amp; Built by Behnam</span></div>
+    </footer>
+
+    <!-- =====================================================
+         پنجره ورود نمایشی: در این نسخه پیامک واقعی ارسال نمی‌شود.
+         کد آزمایشی فقط برای بررسی ظاهر و رفتار فیلدهای OTP است.
+    ====================================================== -->
+    <div class="login-overlay" id="login-dialog" hidden>
+        <section class="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
+            <button class="modal-close" type="button" data-close-login aria-label="بستن پنجره">×</button>
+            <div class="login-visual"><div class="login-visual-mark">B<span>Z</span><i>.</i></div><div class="login-visual-orbit"></div><span class="login-visual-label">PRIVATE SPACE / 01</span><h3>یک قدم تا<br><em>فضای شخصی</em></h3><p>ورود ساده، ظاهر دقیق و آماده اتصال به سامانه احراز هویت.</p></div>
+            <div class="login-content">
+                <div class="login-topline"><span>BEHNAM / ACCOUNT</span><span class="secure-mark">✳ SECURE UI</span></div>
+                <div class="login-progress"><span class="progress-step active"></span><span class="progress-step"></span><span class="progress-step"></span></div>
+
+                <div class="login-step active" data-login-step="phone">
+                    <span class="login-kicker">مرحله ۱ از ۳</span><h2 id="login-title">خوش برگشتی.</h2><p>شماره موبایلت را وارد کن تا مرحله تأیید را ببینی.</p>
+                    <form id="phone-form" novalidate>
+                        <label class="field"><span>شماره موبایل</span><div class="phone-field"><span>+98</span><input id="login-phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="11" placeholder="913 000 0000" required></div></label>
+                        <button class="button button-primary login-submit" type="submit">دریافت کد تأیید <span>↙</span></button>
+                    </form>
+                    <div class="demo-notice"><span>i</span><p>نسخه نمایشی رابط کاربری است؛ ارسال پیامک و احراز هویت واقعی پس از اتصال بک‌اند فعال می‌شود.</p></div>
+                </div>
+
+                <div class="login-step" data-login-step="otp">
+                    <span class="login-kicker">مرحله ۲ از ۳</span><h2>کد را وارد کن.</h2><p>کد پنج‌رقمی برای شماره <b id="masked-phone" dir="ltr">+98 *** *** ****</b> آماده شده است.</p>
+                    <form id="otp-form" novalidate>
+                        <div class="otp-fields" dir="ltr" aria-label="کد پنج رقمی">
+                            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="رقم اول">
+                            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="رقم دوم">
+                            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="رقم سوم">
+                            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="رقم چهارم">
+                            <input class="otp-input" type="text" inputmode="numeric" maxlength="1" aria-label="رقم پنجم">
+                        </div>
+                        <p class="otp-hint" id="otp-hint">کد آزمایشی این نسخه: <b dir="ltr">12345</b></p>
+                        <button class="button button-primary login-submit" type="submit">تأیید کد <span>↙</span></button>
+                    </form>
+                    <button class="text-button" type="button" data-back-phone>ویرایش شماره موبایل</button>
+                </div>
+
+                <div class="login-step" data-login-step="username">
+                    <span class="login-kicker">مرحله ۳ از ۳</span><h2>اسمت را ثبت کن.</h2><p>برای آماده‌سازی نمای اولیه پنل، یک نام کاربری انتخاب کن.</p>
+                    <form id="username-form" novalidate>
+                        <label class="field"><span>نام کاربری</span><input id="login-username" type="text" minlength="3" maxlength="24" autocomplete="username" placeholder="مثلاً behnam" required></label>
+                        <button class="button button-primary login-submit" type="submit">ساخت نمای آزمایشی پنل <span>↙</span></button>
+                    </form>
+                </div>
+
+                <div class="login-step login-complete" data-login-step="complete">
+                    <div class="success-mark">✓</div><span class="login-kicker">SETUP COMPLETE</span><h2>همه‌چیز آماده است.</h2><p id="login-success-message">رابط ورود با موفقیت بررسی شد.</p><button class="button button-primary login-submit" type="button" data-close-login>بازگشت به سایت</button>
+                    <p class="demo-notice final-demo-note">این فقط پیش‌نمایش فرانت‌اند است؛ حساب کاربری واقعی و پنل امن بعد از پیاده‌سازی بک‌اند ساخته می‌شود.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- پیام‌های کوتاه وضعیت فرم و ارتباط -->
+    <div class="toast" id="site-toast" role="status" aria-live="polite"></div>
+</body>
+</html>
