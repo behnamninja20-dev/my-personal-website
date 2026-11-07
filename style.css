@@ -2474,3 +2474,301 @@ button {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+
+/* =========================================================
+   اصلاحات تکمیلی واکنش‌گرایی
+   هدف: جلوگیری از بیرون‌زدگی واقعی محتوا، نه صرفاً مخفی‌کردن اسکرول افقی
+========================================================= */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+}
+
+main,
+section,
+header,
+footer,
+nav,
+article,
+aside,
+form {
+  min-width: 0;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+}
+
+.hero,
+.hero-copy,
+.hero-art,
+.section-shell,
+.header-inner,
+.journey-inner,
+.skills-grid,
+.projects-grid,
+.contact-grid,
+.request-layout,
+.footer-main,
+.form-grid {
+  min-width: 0;
+}
+
+.hero h1,
+.hero-description,
+.section-heading,
+.skill-card,
+.project-card,
+.project-info,
+.tool-group,
+.request-intro,
+.project-form,
+.contact-card,
+.footer-column,
+.footer-about {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.hero h1,
+.hero-description,
+.skill-card p,
+.project-description,
+.tool-group-title,
+.contact-card,
+.footer-about p {
+  overflow-wrap: anywhere;
+}
+
+.hero-art {
+  max-width: 100%;
+}
+
+.art-chip {
+  min-width: 0;
+  max-width: 46%;
+}
+
+.art-chip > span:last-child {
+  min-width: 0;
+}
+
+.art-chip small {
+  overflow-wrap: anywhere;
+}
+
+.project-browser {
+  max-width: 100%;
+}
+
+.tool-list,
+.tool-pill {
+  min-width: 0;
+}
+
+input,
+textarea,
+select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 720px) {
+  .section-shell,
+  .header-inner,
+  .journey-inner {
+    width: calc(100% - 32px);
+  }
+
+  .hero {
+    width: calc(100% - 32px);
+  }
+
+  .hero h1 {
+    max-width: 100%;
+    font-size: clamp(31px, 8.5vw, 46px);
+    letter-spacing: -1px;
+    overflow-wrap: normal;
+  }
+
+  .hero-art {
+    width: min(100%, 350px);
+    max-width: 100%;
+    overflow: clip;
+  }
+
+  .art-chip {
+    max-width: 45%;
+    padding: 7px 8px;
+    gap: 6px;
+  }
+
+  .art-chip b {
+    font-size: clamp(7px, 2.2vw, 9px);
+  }
+
+  .art-chip small {
+    font-size: clamp(6px, 1.9vw, 8px);
+  }
+
+  .chip-icon {
+    flex: 0 0 25px;
+    width: 25px;
+    height: 25px;
+  }
+
+  .hero-footline {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .hero-footline div {
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .projects-grid,
+  .contact-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tool-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tool-pill {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .project-form,
+  .request-layout,
+  .login-content {
+    min-width: 0;
+  }
+
+  .field,
+  .form-field,
+  .phone-field {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .footer-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 380px) {
+  .section-shell,
+  .header-inner,
+  .journey-inner,
+  .hero {
+    width: calc(100% - 28px);
+  }
+
+  .hero h1 {
+    font-size: clamp(29px, 8.2vw, 33px);
+    letter-spacing: -0.8px;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions .button {
+    min-width: 0;
+    flex: 1 1 0;
+    padding-inline: 8px;
+    font-size: 9px;
+  }
+
+  .hero-art {
+    width: 100%;
+  }
+
+  .art-chip {
+    max-width: 44%;
+    padding: 6px;
+  }
+
+  .chip-icon {
+    flex-basis: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .tool-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tool-pill {
+    min-width: 0;
+    width: 100%;
+    padding: 6px 5px;
+  }
+
+  .footer-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* لودینگ جدید: همه عناصر ثابت‌اند؛ تنها نوار پیشرفت و محوشدن حرکت می‌کنند. */
+.loader-content {
+  width: min(360px, calc(100% - 40px));
+}
+
+.loader-brand {
+  margin-bottom: 34px;
+  font-size: 27px;
+  letter-spacing: -1.5px;
+}
+
+.loader-copy {
+  min-height: 34px;
+  justify-content: center;
+  gap: 0;
+  font: 800 16px/1.2 Arial, sans-serif;
+  letter-spacing: 3.5px;
+}
+
+.loader-fixed {
+  display: inline-block;
+  color: #f4f6ff;
+}
+
+.loader-word {
+  display: none;
+}
+
+.loader-track {
+  width: min(210px, 70%);
+  height: 2px;
+  margin: 24px auto 14px;
+}
+
+.loader-track span {
+  animation: loaderProgress 2.35s cubic-bezier(.4, 0, .2, 1) forwards;
+}
+
+.loader-caption {
+  font-size: 10px;
+  letter-spacing: .2px;
+}
+
+.welcome-word {
+  font-size: clamp(34px, 9vw, 54px);
+  letter-spacing: 2px;
+}

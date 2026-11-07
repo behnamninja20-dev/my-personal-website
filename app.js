@@ -36,42 +36,26 @@
     try { localStorage.setItem(key, value); } catch (_) { /* حالت خصوصی مرورگر */ }
   }
 
-  /* -------------------- لودینگ آغازین -------------------- */
+  /* -------------------- لودینگ آغازین؛ ثابت، کوتاه و بدون پرش -------------------- */
   function runLoader() {
     const loader = $("#site-loader");
     if (!loader) return;
 
-    const words = ["IDEAS", "DESIGN", "DIGITAL"];
-    const wordNode = $("#loader-word");
-    let index = 0;
-
     if (reducedMotion) {
       loader.classList.add("is-leaving");
-      window.setTimeout(() => loader.remove(), 100);
+      window.setTimeout(() => loader.remove(), 120);
       return;
     }
 
-    // واژه دوم هر بار با افکت کوتاه عوض می‌شود؛ کل لودینگ به بارگذاری فونت وابسته نیست.
-    const wordInterval = window.setInterval(() => {
-      index += 1;
-      if (index < words.length && wordNode) {
-        wordNode.textContent = words[index];
-        wordNode.style.animation = "none";
-        void wordNode.offsetWidth;
-        wordNode.style.animation = "wordCycle .85s ease both";
-      }
-    }, 850);
-
-    // پس از سه واژه، خوش‌آمدگویی کوتاه و سپس خروج نرم اجرا می‌شود.
+    // چیدمان و متن در تمام مدت ثابت می‌مانند؛ فقط نوار پیشرفت و محوشدن اجرا می‌شود.
     window.setTimeout(() => {
-      window.clearInterval(wordInterval);
       loader.classList.add("show-welcome");
-    }, 2700);
+    }, 2350);
 
     window.setTimeout(() => {
       loader.classList.add("is-leaving");
       window.setTimeout(() => loader.remove(), 800);
-    }, 3450);
+    }, 3150);
   }
 
   /* -------------------- پوسته روشن و تیره -------------------- */
