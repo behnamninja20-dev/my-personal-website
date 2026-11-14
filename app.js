@@ -1,376 +1,430 @@
-/* ============================================================
-   BEHNAM PORTFOLIO — رفتارهای تعاملی و بهینه‌شده
-   نکته: نشانی ایمیل و شناسه تلگرام را پس از آماده شدن در تنظیمات زیر وارد کن.
-   ارسال پیامک واقعی، ذخیره حساب و پنل کاربری به بک‌اند نیاز دارد.
-============================================================ */
-(() => {
-  "use strict";
+document.addEventListener("DOMContentLoaded", () => {
 
-  /* -------------------- تنظیمات قابل تغییر -------------------- */
-  const CONFIG = {
-    email: "",                 // مثال: hello@example.com
-    telegram: "",              // فقط شناسه، بدون @؛ مثال: behnam_id
-    phone: "+989130930344",    // شماره تماس اعلام‌شده
-    demoOtp: "12345"           // کد نمایشی؛ در نسخه واقعی از سرور دریافت شود.
-  };
+    // =========================================================
+    // 1. دریافت عناصر اصلی صفحه
+    // =========================================================
 
-  const $ = (selector, scope = document) => scope.querySelector(selector);
-  const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const root = document.documentElement;
+    const body = document.body;
 
-  /* -------------------- ابزارهای کمکی -------------------- */
-  let toastTimer;
-  function showToast(message) {
-    const toast = $("#site-toast");
-    if (!toast) return;
-    toast.textContent = message;
-    toast.classList.add("show");
-    window.clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(() => toast.classList.remove("show"), 3200);
-  }
+    const loader = document.getElementById("loading-screen");
+    const header = document.querySelector(".navbar");
 
-  function safeStorageGet(key) {
-    try { return localStorage.getItem(key); } catch (_) { return null; }
-  }
-  function safeStorageSet(key, value) {
-    try { localStorage.setItem(key, value); } catch (_) { /* حالت خصوصی مرورگر */ }
-  }
+    const menu = document.getElementById("main-menu");
+    const menuBtn = document.querySelector(".menu-toggle");
 
-  /* -------------------- لودینگ آغازین -------------------- */
-  function runLoader() {
-    const loader = $("#site-loader");
-    if (!loader) return;
+    const themeBtn = document.querySelector(".theme-toggle");
 
-    const words = ["IDEAS", "DESIGN", "DIGITAL"];
-    const wordNode = $("#loader-word");
-    let index = 0;
 
-    if (reducedMotion) {
-      loader.classList.add("is-leaving");
-      window.setTimeout(() => loader.remove(), 100);
-      return;
+
+    // =========================================================
+    // 2. نمایش نرم صفحه و مدیریت لودینگ
+    // =========================================================
+
+    let pageStarted = false;
+    let loaderRemoved = false;
+
+    if (loader) {
+        body.classList.add("loading-active");
     }
 
-    // واژه دوم هر بار با افکت کوتاه عوض می‌شود؛ کل لودینگ به بارگذاری فونت وابسته نیست.
-    const wordInterval = window.setInterval(() => {
-      index += 1;
-      if (index < words.length && wordNode) {
-        wordNode.textContent = words[index];
-        wordNode.style.animation = "none";
-        void wordNode.offsetWidth;
-        wordNode.style.animation = "wordCycle .85s ease both";
-      }
-    }, 850);
+    function showPage() {
+        if (pageStarted) return;
 
-    // پس از سه واژه، خوش‌آمدگویی کوتاه و سپس خروج نرم اجرا می‌شود.
-    window.setTimeout(() => {
-      window.clearInterval(wordInterval);
-      loader.classList.add("show-welcome");
-    }, 2700);
+        pageStarted = true;
 
-    window.setTimeout(() => {
-      loader.classList.add("is-leaving");
-      window.setTimeout(() => loader.remove(), 800);
-    }, 3450);
-  }
+        body.classList.add("page-ready");
 
-  /* -------------------- پوسته روشن و تیره -------------------- */
-  function initTheme() {
-    const button = $(".theme-toggle");
-    if (!button) return;
+        if (loader && !loaderRemoved) {
+            loader.classList.add("hide");
 
-    button.addEventListener("click", () => {
-      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-      document.documentElement.dataset.theme = next;
-      safeStorageSet("behnam-theme", next);
-      button.setAttribute("aria-label", next === "dark" ? "فعال‌سازی پوسته روشن" : "فعال‌سازی پوسته تیره");
-    });
-  }
+            window.setTimeout(() => {
+                if (loader.isConnected) {
+                    loader.remove();
+                }
 
-  /* -------------------- منوی موبایل -------------------- */
-  function initNavigation() {
-    const nav = $("#main-nav");
-    const menuButton = $(".menu-toggle");
-    const header = $(".site-header");
-    if (!nav || !menuButton) return;
+                body.classList.remove("loading-active");
+                loaderRemoved = true;
 
-    const setMenu = (open) => {
-      nav.classList.toggle("open", open);
-      menuButton.classList.toggle("active", open);
-      menuButton.setAttribute("aria-expanded", String(open));
-      menuButton.setAttribute("aria-label", open ? "بستن منو" : "باز کردن منو");
-    };
+            }, 600);
 
-    menuButton.addEventListener("click", () => setMenu(!nav.classList.contains("open")));
-    $$('a[href^="#"]', nav).forEach(link => link.addEventListener("click", () => setMenu(false)));
-    document.addEventListener("click", event => {
-      if (header && !header.contains(event.target)) setMenu(false);
-    });
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape") setMenu(false);
-    });
-
-    // مشخص کردن لینک بخش فعال هنگام اسکرول؛ یک ناظر مشترک و سبک.
-    const sections = $$("main section[id]");
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          $$(".nav-link").forEach(link => {
-            link.classList.toggle("is-active", link.getAttribute("href") === `#${entry.target.id}`);
-          });
-        });
-      }, { rootMargin: "-25% 0px -60% 0px", threshold: 0 });
-      sections.forEach(section => observer.observe(section));
-    }
-  }
-
-  /* -------------------- نمایش تدریجی بخش‌ها -------------------- */
-  function initReveal() {
-    const elements = $$(".reveal");
-    if (!elements.length) return;
-    if (reducedMotion || !("IntersectionObserver" in window)) {
-      elements.forEach(element => element.classList.add("is-visible"));
-      return;
-    }
-
-    const observer = new IntersectionObserver((entries, currentObserver) => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("is-visible");
-        currentObserver.unobserve(entry.target);
-      });
-    }, { threshold: 0.12, rootMargin: "0px 0px -35px 0px" });
-
-    elements.forEach((element, index) => {
-      // تأخیر بسیار کم و محدود برای ایجاد ریتم؛ از انیمیشن‌های سنگین پرهیز شده است.
-      element.style.transitionDelay = `${Math.min(index % 4, 3) * 65}ms`;
-      observer.observe(element);
-    });
-  }
-
-  /* -------------------- اطلاعات تماس و لینک‌ها -------------------- */
-  function initContactLinks() {
-    const emailLinks = $$('[data-contact-email]');
-    const telegramLinks = $$('[data-contact-telegram]');
-
-    emailLinks.forEach(link => {
-      if (CONFIG.email.trim()) {
-        link.href = `mailto:${CONFIG.email.trim()}`;
-      } else {
-        link.href = "#request";
-        link.addEventListener("click", event => {
-          event.preventDefault();
-          showToast("برای فعال شدن ایمیل، نشانی آن را در ابتدای فایل app.js وارد کن.");
-        });
-      }
-    });
-
-    telegramLinks.forEach(link => {
-      if (CONFIG.telegram.trim()) {
-        link.href = `https://t.me/${CONFIG.telegram.trim().replace(/^@/, "")}`;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-      } else {
-        link.href = "#request";
-        link.addEventListener("click", event => {
-          event.preventDefault();
-          showToast("برای فعال شدن تلگرام، شناسه آن را در ابتدای فایل app.js وارد کن.");
-        });
-      }
-    });
-  }
-
-  /* -------------------- فرم سفارش پروژه -------------------- */
-  function collectProjectForm(form) {
-    const data = new FormData(form);
-    return [
-      "سلام، برای ثبت درخواست پروژه پیام می‌دهم.",
-      "",
-      `نام: ${data.get("name") || "-"}`,
-      `راه ارتباطی: ${data.get("reply") || "-"}`,
-      `نوع پروژه: ${data.get("projectType") || "-"}`,
-      `بودجه: ${data.get("budget") || "مشخص نشده"}`,
-      "",
-      "توضیحات:",
-      data.get("details") || "-"
-    ].join("\n");
-  }
-
-  function initProjectForm() {
-    const form = $("#project-form");
-    const note = $("#form-note");
-    const telegramButton = $("#send-telegram");
-    if (!form) return;
-
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-      if (!form.reportValidity()) return;
-      if (!CONFIG.email.trim()) {
-        if (note) note.textContent = "ابتدا ایمیل مقصد را در ابتدای app.js وارد کن؛ متن فرم آماده است اما نشانی مقصد تنظیم نشده.";
-        showToast("نشانی ایمیل مقصد هنوز تنظیم نشده است.");
-        return;
-      }
-      const subject = encodeURIComponent("درخواست همکاری / ثبت پروژه");
-      const body = encodeURIComponent(collectProjectForm(form));
-      window.location.href = `mailto:${CONFIG.email.trim()}?subject=${subject}&body=${body}`;
-      if (note) note.textContent = "برنامه ایمیل باز می‌شود؛ ارسال نهایی را در برنامه خودت تأیید کن.";
-    });
-
-    telegramButton?.addEventListener("click", () => {
-      if (!form.reportValidity()) return;
-      const message = collectProjectForm(form);
-      const url = CONFIG.telegram.trim()
-        ? `https://t.me/${CONFIG.telegram.trim().replace(/^@/, "")}?text=${encodeURIComponent(message)}`
-        : `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(message)}`;
-      window.open(url, "_blank", "noopener,noreferrer");
-      if (note) note.textContent = "متن درخواست برای تلگرام آماده شد؛ در صورت نیاز آن را در گفتگو ارسال کن.";
-    });
-  }
-
-  /* -------------------- پنجره ورود نمایشی -------------------- */
-  function initLogin() {
-    const dialog = $("#login-dialog");
-    if (!dialog) return;
-
-    const steps = $$(".login-step", dialog);
-    const progress = $$(".progress-step", dialog);
-    const phoneInput = $("#login-phone");
-    const otpInputs = $$(".otp-input", dialog);
-    const maskedPhone = $("#masked-phone");
-    const usernameInput = $("#login-username");
-    let phoneValue = "";
-    let lastFocused = null;
-
-    const showStep = name => {
-      steps.forEach(step => step.classList.toggle("active", step.dataset.loginStep === name));
-      const order = ["phone", "otp", "username", "complete"];
-      const current = order.indexOf(name);
-      progress.forEach((item, index) => {
-        item.classList.toggle("active", index === Math.min(current, 2));
-        item.classList.toggle("done", index < current);
-      });
-    };
-
-    const openDialog = () => {
-      lastFocused = document.activeElement;
-      dialog.hidden = false;
-      document.body.style.overflow = "hidden";
-      showStep("phone");
-      window.setTimeout(() => phoneInput?.focus(), 80);
-    };
-    const closeDialog = () => {
-      dialog.hidden = true;
-      document.body.style.overflow = "";
-      lastFocused?.focus?.();
-    };
-
-    $$('[data-open-login]').forEach(button => button.addEventListener("click", openDialog));
-    $$('[data-close-login]').forEach(button => button.addEventListener("click", closeDialog));
-    dialog.addEventListener("click", event => { if (event.target === dialog) closeDialog(); });
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && !dialog.hidden) closeDialog();
-    });
-
-    $("#phone-form")?.addEventListener("submit", event => {
-      event.preventDefault();
-      const digits = (phoneInput?.value || "").replace(/\D/g, "");
-      if (!/^9\d{9}$/.test(digits)) {
-        showToast("شماره موبایل باید با ۹ شروع شود و ۱۰ رقم داشته باشد.");
-        phoneInput?.focus();
-        return;
-      }
-      phoneValue = digits;
-      if (maskedPhone) maskedPhone.textContent = `+98 ${digits.slice(0,3)} *** ${digits.slice(-2)}`;
-      otpInputs.forEach(input => { input.value = ""; input.classList.remove("filled"); });
-      showStep("otp");
-      window.setTimeout(() => otpInputs[0]?.focus(), 80);
-      showToast("حالت نمایشی: کد آزمایشی 12345 را وارد کن.");
-    });
-
-    // هر رقم در خانه خودش می‌نشیند؛ خط خانه قبلی روشن می‌ماند و خانه بعدی فعال می‌شود.
-    otpInputs.forEach((input, index) => {
-      input.addEventListener("input", () => {
-        const digit = input.value.replace(/\D/g, "").slice(-1);
-        input.value = digit;
-        input.classList.toggle("filled", Boolean(digit));
-        if (digit && index < otpInputs.length - 1) otpInputs[index + 1].focus();
-      });
-      input.addEventListener("keydown", event => {
-        if (event.key === "Backspace" && !input.value && index > 0) {
-          otpInputs[index - 1].focus();
-          otpInputs[index - 1].value = "";
-          otpInputs[index - 1].classList.remove("filled");
+        } else {
+            body.classList.remove("loading-active");
         }
-        if (event.key === "ArrowLeft" && index < otpInputs.length - 1) otpInputs[index + 1].focus();
-        if (event.key === "ArrowRight" && index > 0) otpInputs[index - 1].focus();
-      });
-      input.addEventListener("paste", event => {
-        const pasted = (event.clipboardData?.getData("text") || "").replace(/\D/g, "").slice(0, 5);
-        if (!pasted) return;
-        event.preventDefault();
-        [...pasted].forEach((digit, digitIndex) => {
-          if (!otpInputs[digitIndex]) return;
-          otpInputs[digitIndex].value = digit;
-          otpInputs[digitIndex].classList.add("filled");
+    }
+
+    if (document.readyState === "complete") {
+        window.setTimeout(showPage, 250);
+    } else {
+        window.addEventListener("load", showPage, { once: true });
+    }
+
+    // جلوگیری از گیر کردن لودینگ
+    window.setTimeout(showPage, 5000);
+
+
+    // =========================================================
+    // 3. مدیریت منوی موبایل
+    // =========================================================
+
+    function setMenu(open) {
+        if (!menu || !menuBtn) return;
+
+        menu.classList.toggle("open", open);
+        menuBtn.classList.toggle("active", open);
+
+        menuBtn.setAttribute("aria-expanded", String(open));
+
+        menuBtn.setAttribute(
+            "aria-label",
+            open
+                ? (window.t ? window.t("aria.menuClose") : "بستن منو")
+                : (window.t ? window.t("aria.menuOpen") : "باز کردن منو")
+        );
+    }
+
+    if (menu && menuBtn) {
+
+        menuBtn.addEventListener("click", () => {
+            const isOpen = menu.classList.contains("open");
+            setMenu(!isOpen);
         });
-        otpInputs[Math.min(pasted.length, 4)]?.focus();
-      });
+
+        menu.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => {
+                setMenu(false);
+            });
+        });
+
+        document.addEventListener("click", event => {
+            if (!header) return;
+
+            if (!header.contains(event.target)) {
+                setMenu(false);
+            }
+        });
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape") {
+                setMenu(false);
+            }
+        });
+
+        const desktopQuery = window.matchMedia("(min-width: 768px)");
+
+        const handleScreenChange = event => {
+            if (event.matches) {
+                setMenu(false);
+            }
+        };
+
+        if (desktopQuery.addEventListener) {
+            desktopQuery.addEventListener("change", handleScreenChange);
+        } else {
+            desktopQuery.addListener(handleScreenChange);
+        }
+    }
+
+
+    // =========================================================
+    // 4. مدیریت تم روز و شب
+    // =========================================================
+
+    function applyTheme(theme) {
+        const validTheme = theme === "dark" ? "dark" : "light";
+
+        root.setAttribute("data-theme", validTheme);
+
+        if (themeBtn) {
+            themeBtn.setAttribute(
+                "aria-label",
+                validTheme === "dark"
+                    ? (window.t ? window.t("aria.themeToDay") : "تغییر به حالت روز")
+                    : (window.t ? window.t("aria.themeToNight") : "تغییر به حالت شب")
+            );
+        }
+
+        try {
+            localStorage.setItem("theme", validTheme);
+        } catch (error) {
+            // ادامه عملکرد سایت بدون ذخیره‌سازی
+        }
+    }
+
+    let initialTheme = "light";
+
+    try {
+        initialTheme =
+            localStorage.getItem("theme") ||
+            root.getAttribute("data-theme") ||
+            "light";
+    } catch (error) {
+        initialTheme = root.getAttribute("data-theme") || "light";
+    }
+
+    applyTheme(initialTheme);
+
+    if (themeBtn) {
+        themeBtn.addEventListener("click", () => {
+            const currentTheme = root.getAttribute("data-theme");
+
+            applyTheme(
+                currentTheme === "dark" ? "light" : "dark"
+            );
+        });
+    }
+
+
+    // =========================================================
+    // 5. تغییر ظاهر هدر هنگام اسکرول
+    // =========================================================
+
+    if (header) {
+      let scrollScheduled = false;
+
+      function updateHeader() {
+        header.classList.toggle("is-scrolled", window.scrollY > 20);
+
+        scrollScheduled = false;
+      }
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (scrollScheduled) return;
+
+          scrollScheduled = true;
+          window.requestAnimationFrame(updateHeader);
+        },
+        { passive: true },
+      );
+
+      updateHeader();
+
+      // =========================================================
+      // نمایش کارت کدنویسی هنگام اسکرول در موبایل
+      // =========================================================
+
+      const heroVisual = document.querySelector(".hero-visual");
+
+      // این افکت فقط در نمایشگرهای موبایل فعال می‌شود.
+      const mobileQuery = window.matchMedia("(max-width: 767px)");
+
+      if (heroVisual && mobileQuery.matches && "IntersectionObserver" in window) {
+        const heroVisualObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              // کارت فقط پس از شروع اسکرول و رسیدن به محدوده دید نمایش داده می‌شود.
+              if (entry.isIntersecting && window.scrollY > 0) {
+                heroVisual.classList.add("is-visible");
+
+                // پس از نمایش، دیگر نیازی به بررسی کارت نیست.
+                observer.unobserve(heroVisual);
+              }
+            });
+          },
+          {
+            threshold: 0.1,
+            rootMargin: "0px 0px -15% 0px",
+          },
+        );
+
+        heroVisualObserver.observe(heroVisual);
+      } else if (heroVisual && mobileQuery.matches) {
+        // در مرورگرهای فاقد IntersectionObserver، کارت مخفی نمی‌ماند.
+        heroVisual.classList.add("is-visible");
+      }
+    }
+
+    // =========================================================
+    // 6. نمایش بخش‌ها هنگام اسکرول (Scroll Reveal)
+    // ---------------------------------------------------------
+    // هر عنصر دارای data-reveal تا وقتی کاربر به آن نرسیده مخفی است
+    // و با رسیدن به محدوده دید، انیمیشن مخصوص خودش را اجرا می‌کند.
+    //
+    // - عنوان هر بخش، هر کارت مهارت، هر دسته ابزار و پیام پایانی
+    //   مستقل از هم نمایش داده می‌شوند.
+    // - کارت‌های هم‌ردیف با فاصله زمانی کوتاه، پشت سر هم ظاهر می‌شوند.
+    // - اگر JavaScript اجرا نشود یا کاربر کاهش حرکت را فعال کرده باشد،
+    //   همه چیز بدون انیمیشن نمایش داده می‌شود.
+    // =========================================================
+
+    const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    const revealItems = document.querySelectorAll("[data-reveal]");
+
+    if (revealItems.length > 0) {
+
+        // فعال کردن حالت مخفی اولیه (فقط وقتی JavaScript در حال اجراست)
+        root.classList.add("reveal-js");
+
+        // محاسبه تأخیر ورود؛ کارت‌های هم‌ردیف پشت سر هم ظاهر می‌شوند
+        function getRevealDelay(element) {
+
+            if (element.dataset.reveal !== "card") return 0;
+
+            const grid = element.parentElement;
+
+            const columns = window
+                .getComputedStyle(grid)
+                .gridTemplateColumns
+                .split(" ")
+                .length;
+
+            const index = Array.prototype.indexOf.call(grid.children, element);
+
+            return (index % columns) * 110;
+        }
+
+        function revealElement(element) {
+
+            if (element.classList.contains("is-visible")) return;
+
+            element.style.setProperty("--d", `${getRevealDelay(element)}ms`);
+            element.classList.add("is-visible");
+        }
+
+        if ("IntersectionObserver" in window && !prefersReducedMotion) {
+
+            // در صفحه‌های بلند (مثل تبلت عمودی) ممکن است بخش بعدی بدون اسکرول
+            // در دید باشد. تا زمانی که کاربر اسکرول نکرده، چیزی نمایش داده نمی‌شود.
+            let userHasScrolled = window.scrollY > 0;
+            const waitingForScroll = new Set();
+
+            window.addEventListener(
+                "scroll",
+                () => {
+                    if (userHasScrolled || window.scrollY <= 0) return;
+
+                    userHasScrolled = true;
+
+                    waitingForScroll.forEach(element => {
+                        revealElement(element);
+                        revealObserver.unobserve(element);
+                    });
+
+                    waitingForScroll.clear();
+                },
+                { passive: true }
+            );
+
+            const revealObserver = new IntersectionObserver(
+                (entries, observer) => {
+
+                    entries.forEach(entry => {
+
+                        // عنصری که کاربر از آن رد شده (بالاتر از صفحه است) هم نمایش داده می‌شود
+                        const alreadyPassed = entry.boundingClientRect.top < 0;
+
+                        if (!entry.isIntersecting && !alreadyPassed) return;
+
+                        if (!userHasScrolled) {
+                            waitingForScroll.add(entry.target);
+                            return;
+                        }
+
+                        revealElement(entry.target);
+                        observer.unobserve(entry.target);
+
+                    });
+
+                },
+                {
+                    threshold: 0.12,
+
+                    // عنصر وقتی نمایش داده می‌شود که کمی داخل صفحه آمده باشد،
+                    // نه همین که لبه پایین صفحه را لمس کند.
+                    rootMargin: "0px 0px -12% 0px"
+                }
+            );
+
+            revealItems.forEach(item => revealObserver.observe(item));
+
+        } else {
+
+            // مرورگرهای قدیمی یا کاربران با تنظیم کاهش حرکت
+            revealItems.forEach(revealElement);
+        }
+    }
+
+
+    // =========================================================
+    // 7. افکت نور دنبال‌کننده موس روی کارت‌های مهارت
+    // ---------------------------------------------------------
+    // فقط روی دستگاه‌های دارای موس فعال است (در لمسی اجرا نمی‌شود).
+    // =========================================================
+
+    const skillCards = document.querySelectorAll("#skills .skill-card");
+
+    const supportsMouse = window.matchMedia(
+        "(hover: hover) and (pointer: fine)"
+    ).matches;
+
+    if (skillCards.length > 0 && supportsMouse) {
+
+        skillCards.forEach(card => {
+
+            // حرکت موس روی کارت
+            card.addEventListener("pointermove", event => {
+
+                const rect = card.getBoundingClientRect();
+
+                // ارسال مختصات موس به متغیرهای CSS
+                card.style.setProperty("--mouse-x", `${event.clientX - rect.left}px`);
+                card.style.setProperty("--mouse-y", `${event.clientY - rect.top}px`);
+
+            });
+
+            // بازگرداندن نور به مرکز کارت
+            card.addEventListener("pointerleave", () => {
+
+                card.style.setProperty("--mouse-x", "50%");
+                card.style.setProperty("--mouse-y", "50%");
+
+            });
+
+        });
+    }
+
+
+    // =========================================================
+    // 8. لوگوهای خارجی ابزارها (Adobe)
+    // ---------------------------------------------------------
+    // اگر فایل یک لوگو بارگذاری نشود، قاب خالی نمایش داده نمی‌شود و فقط نام ابزار می‌ماند.
+    // =========================================================
+
+    document.querySelectorAll("#tools .logo-mask[data-logo]").forEach(mask => {
+
+        const probe = new Image();
+
+        probe.addEventListener("error", () => {
+            mask.closest(".tool-logo")?.classList.add("is-broken");
+        });
+
+        probe.src = mask.dataset.logo;
     });
 
-    $("#otp-form")?.addEventListener("submit", event => {
-      event.preventDefault();
-      const code = otpInputs.map(input => input.value).join("");
-      if (code.length !== 5) {
-        showToast("هر پنج رقم کد را وارد کن.");
-        otpInputs.find(input => !input.value)?.focus();
-        return;
-      }
-      if (code !== CONFIG.demoOtp) {
-        showToast("کد آزمایشی درست نیست. برای تست از 12345 استفاده کن.");
-        otpInputs.forEach(input => { input.value = ""; input.classList.remove("filled"); });
-        otpInputs[0]?.focus();
-        return;
-      }
-      showStep("username");
-      window.setTimeout(() => usernameInput?.focus(), 80);
-    });
 
-    $("[data-back-phone]")?.addEventListener("click", () => showStep("phone"));
-    $("#username-form")?.addEventListener("submit", event => {
-      event.preventDefault();
-      const username = (usernameInput?.value || "").trim();
-      if (!/^[\p{L}\p{N}_.-]{3,24}$/u.test(username)) {
-        showToast("نام کاربری باید ۳ تا ۲۴ نویسه و بدون فاصله باشد.");
-        usernameInput?.focus();
-        return;
-      }
-      const message = $("#login-success-message");
-      if (message) message.textContent = `خوش آمدی ${username}؛ این ورود فقط نمایشی است و هنوز حسابی در سرور ساخته نشده.`;
-      showStep("complete");
-    });
-  }
+    // (بخش ۱۱ قبلی حذف شد: به انیمیشنی اشاره می‌کرد که در پروژه وجود ندارد و هنگام تغییر تب خطا می‌داد.)
 
-  /* -------------------- سال جاری و آغاز برنامه -------------------- */
-  function initFooter() {
-    const year = $("#current-year");
-    if (year) year.textContent = String(new Date().getFullYear());
-  }
+});
 
-  function init() {
-    runLoader();
-    initTheme();
-    initNavigation();
-    initReveal();
-    initContactLinks();
-    initProjectForm();
-    initLogin();
-    initFooter();
-  }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
-  } else {
-    init();
-  }
-})();
+// ============================================================
+// CONTENT PROTECTION | محدود کردن کپی معمولی
+// ============================================================
+
+// جلوگیری از کپی با Ctrl+C و Cmd+C
+document.addEventListener("copy", function (event) {
+    // فیلدهای فرم و عناصر دارای data-allow-copy (مثل شماره پیگیری) مستثنی هستند.
+    if (event.target.closest && event.target.closest("input, textarea, [data-allow-copy]")) return;
+    event.preventDefault();
+});
+
+// جلوگیری از برش متن با Ctrl+X و Cmd+X
+document.addEventListener("cut", function (event) {
+    if (event.target.closest && event.target.closest("input, textarea, [data-allow-copy]")) return;
+    event.preventDefault();
+});
